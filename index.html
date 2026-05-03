@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La scuola che vogliamo — Scrivi la tua proposta</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F3EE;
+    --surface: #FFFFFF;
+    --s1: #1A4A6E;
+    --s1l: #E3EEF7;
+    --s2: #1B5E35;
+    --s2l: #E3F2E8;
+    --s3: #8B3A00;
+    --s3l: #FEF0E6;
+    --s4: #4A1A6E;
+    --s4l: #F0E8FA;
+    --ok: #1B5E35;
+    --warn: #8B3A00;
+    --text: #1A1A1A;
+    --muted: #666;
+    --border: #DDD;
+    --radius: 14px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--s1);
+    color: white;
+    padding: 28px 32px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    font-size: 0.82rem;
+    opacity: 0.7;
+    margin-top: 3px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: rgba(255,255,255,0.15);
+    border-radius: 99px;
+    height: 5px;
+    margin-top: 14px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: white;
+    border-radius: 99px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+  .progress-steps {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.6);
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .step-dot.active { background: white; color: var(--s1); }
+  .step-dot.done { background: rgba(255,255,255,0.5); color: white; }
+
+  /* MAIN */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* NOME STUDENTE */
+  .name-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .name-card label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    color: var(--s1);
+  }
+  .name-card input {
+    flex: 1;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .name-card input:focus { border-color: var(--s1); }
+
+  /* PROPOSTA CHOICE */
+  .proposal-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  .proposal-card label {
+    display: block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--s1);
+    margin-bottom: 8px;
+  }
+  .proposal-card input {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .proposal-card input:focus { border-color: var(--s1); }
+
+  /* SEZIONE */
+  .section-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  .section-card.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: white;
+  }
+
+  .s1 .section-header { background: var(--s1); }
+  .s1 .section-num    { color: var(--s1); }
+  .s2 .section-header { background: var(--s2); }
+  .s2 .section-num    { color: var(--s2); }
+  .s3 .section-header { background: var(--s3); }
+  .s3 .section-num    { color: var(--s3); }
+  .s4 .section-header { background: var(--s4); }
+  .s4 .section-num    { color: var(--s4); }
+
+  .section-body { padding: 20px 24px; }
+
+  /* GUIDE DOMANDE */
+  .guide {
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .guide-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .guide ol { padding-left: 18px; }
+  .guide li { margin-bottom: 5px; }
+
+  .s1 .guide { background: var(--s1l); color: var(--s1); }
+  .s2 .guide { background: var(--s2l); color: var(--s2); }
+  .s3 .guide { background: var(--s3l); color: var(--s3); }
+  .s4 .guide { background: var(--s4l); color: var(--s4); }
+
+  /* TEXTAREA */
+  textarea {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 140px;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+  }
+  .s1 textarea:focus { border-color: var(--s1); }
+  .s2 textarea:focus { border-color: var(--s2); }
+  .s3 textarea:focus { border-color: var(--s3); }
+  .s4 textarea:focus { border-color: var(--s4); }
+
+  .char-count {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 5px;
+  }
+  .char-count.warn { color: var(--warn); font-weight: 700; }
+
+  /* BOTTONE FEEDBACK */
+  .btn-feedback {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 99px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: all 0.2s;
+  }
+  .btn-feedback:disabled { opacity: 0.5; cursor: not-allowed; }
+  .s1 .btn-feedback { background: var(--s1); color: white; }
+  .s2 .btn-feedback { background: var(--s2); color: white; }
+  .s3 .btn-feedback { background: var(--s3); color: white; }
+  .s4 .btn-feedback { background: var(--s4); color: white; }
+  .btn-feedback:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+  /* FEEDBACK BOX */
+  .feedback-box {
+    margin-top: 16px;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+  .feedback-box.visible { display: block; }
+  .feedback-box .fb-title {
+    font-weight: 800;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .feedback-ok  { background: #E8F5E9; border-left: 4px solid var(--ok); color: #1B3A22; }
+  .feedback-ok .fb-title { color: var(--ok); }
+  .feedback-warn { background: #FEF3E2; border-left: 4px solid var(--warn); color: #4A2000; }
+  .feedback-warn .fb-title { color: var(--warn); }
+
+  /* LOADING */
+  .loading {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* BOTTONE AVANTI */
+  .btn-next {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: all 0.2s;
+    display: none;
+  }
+  .btn-next.visible { display: block; animation: fadeUp 0.3s ease; }
+  .s1 .btn-next { background: var(--s1); color: white; }
+  .s2 .btn-next { background: var(--s2); color: white; }
+  .s3 .btn-next { background: var(--s3); color: white; }
+  .s4 .btn-next { background: var(--s4); color: white; }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+
+  /* RIEPILOGO FINALE */
+  #final-section {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  #final-section.visible { display: block; }
+
+  .final-feedback-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .final-feedback-header {
+    background: #1A2B3C;
+    color: white;
+    padding: 18px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+  .final-feedback-body {
+    padding: 22px 24px;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    min-height: 80px;
+  }
+
+  /* PROPOSTA ASSEMBLATATA */
+  .assembled-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .assembled-header {
+    background: var(--s1);
+    color: white;
+    padding: 16px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-copy {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-copy:hover { background: rgba(255,255,255,0.35); }
+  .btn-copy.copied { background: var(--ok); }
+
+  .assembled-body {
+    padding: 22px 24px;
+  }
+  .assembled-section {
+    margin-bottom: 20px;
+  }
+  .assembled-section:last-child { margin-bottom: 0; }
+  .assembled-label {
+    font-weight: 800;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 6px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    display: inline-block;
+  }
+  .assembled-text {
+    font-size: 0.93rem;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .lbl-1 { background: var(--s1l); color: var(--s1); }
+  .lbl-2 { background: var(--s2l); color: var(--s2); }
+  .lbl-3 { background: var(--s3l); color: var(--s3); }
+  .lbl-4 { background: var(--s4l); color: var(--s4); }
+
+  /* BOTTONE FINALE GENERA */
+  #btn-generate-final {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #1A2B3C;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: all 0.2s;
+  }
+  #btn-generate-final:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  #btn-generate-final:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* SCORE */
+  .score-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .score-item {
+    flex: 1;
+    min-width: 100px;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .score-label { font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .score-value { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.4rem; }
+  .score-ok   { color: var(--ok); }
+  .score-mid  { color: var(--warn); }
+  .score-bad  { color: #B71C1C; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✏️ La scuola che vogliamo — Scrivi la tua proposta</h1>
+  <p>Classe 2E · A.S. 2025/2026</p>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="progress-steps">
+    <div class="step-dot active" id="dot0">1</div>
+    <div class="step-dot" id="dot1">2</div>
+    <div class="step-dot" id="dot2">3</div>
+    <div class="step-dot" id="dot3">4</div>
+    <div class="step-dot" id="dot4">✓</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- NOME -->
+  <div class="name-card">
+    <label for="studentName">Il tuo nome:</label>
+    <input type="text" id="studentName" placeholder="Nome e cognome..." autocomplete="off">
+  </div>
+
+  <!-- PROPOSTA SCELTA -->
+  <div class="proposal-card">
+    <label for="proposalTitle">La mia proposta è:</label>
+    <input type="text" id="proposalTitle" placeholder="Es. Ridurre i compiti a casa, Introdurre pause più lunghe..." autocomplete="off">
+  </div>
+
+  <!-- ── SEZIONE 1: PROBLEMA ── -->
+  <div class="section-card s1 visible" id="sec1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">IL PROBLEMA</div>
+    </div>
+    <div class="section-body">
+      <div class="guide">
+        <div class="guide-title">💬 Per scrivere questa parte, rispondi a queste domande:</div>
+        <ol>
+          <li>Cosa non funziona esattamente? Descrivi in modo preciso, non generico.</li>
+          <li>Quando ti è capitato di viverlo? Racconta un episodio concreto — un giorno, un'ora specifica.</li>
+          <li>Quali conseguenze ha questo problema su di te o sui tuoi compagni?</li>
+          <li>Perché è un problema serio per l'apprendimento o il benessere?</li>
+        </ol>
+      </div>
+      <textarea id="text1" placeholder="Scrivi qui la descrizione del problema..." oninput="updateChar(1)"></textarea>
+      <div class="char-count" id="char1">0 parole</div>
+      <button class="btn-feedback" onclick="getFeedback(1)" id="fbBtn1">
+        <span>Ricevi feedback su questa sezione</span>
+      </button>
+      <div class="feedback-box" id="fb1"></div>
+      <button class="btn-next" id="next1" onclick="nextSection(2)">Continua → La soluzione</button>
+    </div>
+  </div>
+
+  <!-- ── SEZIONE 2: SOLUZIONE ── -->
+  <div class="section-card s2" id="sec2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">LA SOLUZIONE</div>
+    </div>
+    <div class="section-body">
+      <div class="guide">
+        <div class="guide-title">💬 Per scrivere questa parte, rispondi a queste domande:</div>
+        <ol>
+          <li>Cosa proponi esattamente? Sii preciso/a: non "meno compiti" ma "massimo 30 minuti al giorno".</li>
+          <li>Come funzionerebbe in pratica? Chi dovrebbe cambiare cosa?</li>
+          <li>Questa soluzione è realizzabile nella tua scuola?</li>
+        </ol>
+      </div>
+      <textarea id="text2" placeholder="Scrivi qui la tua soluzione concreta..." oninput="updateChar(2)"></textarea>
+      <div class="char-count" id="char2">0 parole</div>
+      <button class="btn-feedback" onclick="getFeedback(2)" id="fbBtn2">
+        <span>Ricevi feedback su questa sezione</span>
+      </button>
+      <div class="feedback-box" id="fb2"></div>
+      <button class="btn-next s2" id="next2" onclick="nextSection(3)">Continua → La prova</button>
+    </div>
+  </div>
+
+  <!-- ── SEZIONE 3: PROVA ── -->
+  <div class="section-card s3" id="sec3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">LA PROVA</div>
+    </div>
+    <div class="section-body">
+      <div class="guide">
+        <div class="guide-title">💬 Per scrivere questa parte, rispondi a queste domande:</div>
+        <ol>
+          <li>Quale paese del Quaderno dei Sistemi fa già questa cosa? (Cerca bene!)</li>
+          <li>Qual è il risultato in quel paese? Cita un dato concreto: posizione PISA, percentuale, numero.</li>
+          <li>Perché questo dimostra che la tua proposta funziona?</li>
+        </ol>
+      </div>
+      <textarea id="text3" placeholder="Scrivi qui la tua prova con dati da almeno un paese..." oninput="updateChar(3)"></textarea>
+      <div class="char-count" id="char3">0 parole</div>
+      <button class="btn-feedback" onclick="getFeedback(3)" id="fbBtn3">
+        <span>Ricevi feedback su questa sezione</span>
+      </button>
+      <div class="feedback-box" id="fb3"></div>
+      <button class="btn-next s3" id="next3" onclick="nextSection(4)">Continua → L'obiezione</button>
+    </div>
+  </div>
+
+  <!-- ── SEZIONE 4: OBIEZIONE ── -->
+  <div class="section-card s4" id="sec4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">L'OBIEZIONE E LA RISPOSTA</div>
+    </div>
+    <div class="section-body">
+      <div class="guide">
+        <div class="guide-title">💬 Per scrivere questa parte, rispondi a queste domande:</div>
+        <ol>
+          <li>Cosa direbbe un adulto scettico per opporsi alla tua proposta?</li>
+          <li>Perché quella critica sembra sensata in superficie?</li>
+          <li>Perché è sbagliata o incompleta? Usa un dato o un ragionamento per smontarla.</li>
+        </ol>
+      </div>
+      <textarea id="text4" placeholder="Scrivi qui l'obiezione e la tua risposta..." oninput="updateChar(4)"></textarea>
+      <div class="char-count" id="char4">0 parole</div>
+      <button class="btn-feedback" onclick="getFeedback(4)" id="fbBtn4">
+        <span>Ricevi feedback su questa sezione</span>
+      </button>
+      <div class="feedback-box" id="fb4"></div>
+      <button class="btn-next s4" id="next4" onclick="showFinal()">Vedi la proposta completa →</button>
+    </div>
+  </div>
+
+  <!-- ── SEZIONE FINALE ── -->
+  <div id="final-section">
+
+    <button id="btn-generate-final" onclick="generateFinalFeedback()">
+      🎯 Genera valutazione finale della proposta
+    </button>
+
+    <div class="final-feedback-card" id="finalFeedbackCard" style="display:none">
+      <div class="final-feedback-header">📋 Valutazione complessiva</div>
+      <div class="final-feedback-body" id="finalFeedbackBody">
+        <div class="score-row" id="scoreRow"></div>
+        <div id="finalFeedbackText"></div>
+      </div>
+    </div>
+
+    <div class="assembled-card">
+      <div class="assembled-header">
+        📄 La tua proposta completa
+        <button class="btn-copy" id="copyBtn" onclick="copyProposal()">📋 Copia tutto</button>
+      </div>
+      <div class="assembled-body" id="assembledBody"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+const API_URL = "/api/claude";
+
+const LABELS = ["IL PROBLEMA","LA SOLUZIONE","LA PROVA","L'OBIEZIONE E LA RISPOSTA"];
+const LABEL_COLORS = ["lbl-1","lbl-2","lbl-3","lbl-4"];
+
+const GUIDES = [
+  "Devi descrivere il problema in modo preciso e concreto, con un esempio dalla tua esperienza. Deve essere chiaro perché il problema è serio, non solo un fastidio.",
+  "Devi proporre una soluzione chiara e realizzabile. Deve essere specifica (non 'meno compiti' ma 'massimo 30 minuti al giorno') e spiegare come funzionerebbe in pratica.",
+  "Devi citare almeno un paese europeo che fa già questa cosa, con un dato concreto (posizione PISA, percentuale, numero). Il dato deve essere collegato alla tua proposta.",
+  "Devi immaginare l'obiezione più forte che potrebbe fare un adulto scettico e risponderle con un ragionamento solido, usando dati se possibile."
+];
+
+let currentSection = 1;
+let feedbackDone = [false,false,false,false];
+
+function wordCount(txt) {
+  return txt.trim().split(/\s+/).filter(w => w.length > 0).length;
+}
+
+function updateChar(n) {
+  const txt = document.getElementById('text'+n).value;
+  const wc = wordCount(txt);
+  const el = document.getElementById('char'+n);
+  el.textContent = wc + (wc === 1 ? ' parola' : ' parole');
+  el.className = 'char-count' + (wc < 30 ? ' warn' : '');
+}
+
+function updateProgress() {
+  const pct = ((currentSection - 1) / 4) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  for(let i=0;i<5;i++){
+    const d = document.getElementById('dot'+i);
+    d.className = 'step-dot';
+    if(i < currentSection-1) d.classList.add('done');
+    else if(i === currentSection-1) d.classList.add('active');
+  }
+}
+
+async function getFeedback(n) {
+  const txt = document.getElementById('text'+n).value.trim();
+  if(!txt || wordCount(txt) < 10) {
+    showFeedback(n, false, "Scrivi almeno qualche riga prima di chiedere il feedback.");
+    return;
+  }
+
+  const btn = document.getElementById('fbBtn'+n);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span><span> Analisi in corso...</span>';
+
+  const proposal = document.getElementById('proposalTitle').value.trim() || 'una proposta per migliorare la scuola';
+  const name = document.getElementById('studentName').value.trim() || 'lo studente';
+
+  const systemPrompt = `Sei un insegnante di scuola media italiana che aiuta uno studente di seconda media a scrivere una proposta argomentata per migliorare la scuola italiana. Il tuo tono è incoraggiante ma onesto. Rispondi SEMPRE in italiano. Sii breve e diretto: massimo 4-5 frasi. Non usare elenchi puntati, scrivi in prosa fluida.`;
+
+  const userPrompt = `Lo studente ${name} sta scrivendo la sezione "${LABELS[n-1]}" per questa proposta: "${proposal}".
+
+Quello che ha scritto:
+"${txt}"
+
+Criteri per questa sezione: ${GUIDES[n-1]}
+
+Valuta brevemente se questa sezione è ben sviluppata o meno. Inizia con un'osservazione positiva, poi indica UNA cosa concreta da migliorare (se necessario). Sii specifico sul testo dello studente, non generico.`;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || "Impossibile ottenere il feedback. Riprova.";
+    const isOk = !text.toLowerCase().includes('non') && wordCount(txt) >= 40;
+    showFeedback(n, isOk, text);
+    feedbackDone[n-1] = true;
+    document.getElementById('next'+n).classList.add('visible');
+  } catch(e) {
+    showFeedback(n, false, "Errore di connessione. Controlla la rete e riprova.");
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<span>🔄 Aggiorna feedback</span>';
+}
+
+function showFeedback(n, isOk, text) {
+  const el = document.getElementById('fb'+n);
+  el.className = 'feedback-box visible ' + (isOk ? 'feedback-ok' : 'feedback-warn');
+  el.innerHTML = `<div class="fb-title">${isOk ? '✅ Feedback' : '💡 Suggerimento'}</div>${text}`;
+  if(!feedbackDone[n-1]) {
+    document.getElementById('next'+n).classList.add('visible');
+  }
+}
+
+function nextSection(n) {
+  currentSection = n;
+  document.getElementById('sec'+n).classList.add('visible');
+  document.getElementById('sec'+n).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  updateProgress();
+}
+
+function showFinal() {
+  currentSection = 5;
+  updateProgress();
+  buildAssembled();
+  const fs = document.getElementById('final-section');
+  fs.classList.add('visible');
+  fs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildAssembled() {
+  const proposal = document.getElementById('proposalTitle').value.trim() || '(proposta)';
+  const name = document.getElementById('studentName').value.trim() || '';
+  const body = document.getElementById('assembledBody');
+
+  let html = `<div style="margin-bottom:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.1rem;color:#1A1A1A">${proposal}</div>`;
+  if(name) html += `<div style="font-size:0.82rem;color:#777;margin-bottom:18px">di ${name} · Classe 2E · A.S. 2025/2026</div>`;
+
+  [1,2,3,4].forEach(n => {
+    const txt = document.getElementById('text'+n).value.trim();
+    html += `<div class="assembled-section">
+      <span class="assembled-label ${LABEL_COLORS[n-1]}">${LABELS[n-1]}</span>
+      <div class="assembled-text" style="margin-top:8px">${txt || '<em style="color:#aaa">Sezione non compilata</em>'}</div>
+    </div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+async function generateFinalFeedback() {
+  const btn = document.getElementById('btn-generate-final');
+  btn.disabled = true;
+  btn.textContent = '⏳ Analisi in corso...';
+
+  const proposal = document.getElementById('proposalTitle').value.trim() || 'una proposta per migliorare la scuola';
+  const name = document.getElementById('studentName').value.trim() || 'lo studente';
+  const texts = [1,2,3,4].map(n => document.getElementById('text'+n).value.trim());
+
+  const systemPrompt = `Sei un insegnante di scuola media italiana esperto in argomentazione. Valuti proposte scritte da studenti di seconda media (12-13 anni). Rispondi SEMPRE in italiano. Il tuo tono è costruttivo, diretto e incoraggiante.`;
+
+  const userPrompt = `Valuta questa proposta completa dello studente ${name} per migliorare la scuola italiana.
+
+PROPOSTA: "${proposal}"
+
+1. IL PROBLEMA:
+"${texts[0]}"
+
+2. LA SOLUZIONE:
+"${texts[1]}"
+
+3. LA PROVA:
+"${texts[2]}"
+
+4. L'OBIEZIONE E LA RISPOSTA:
+"${texts[3]}"
+
+Fornisci:
+1. Un punteggio da 1 a 10 per ciascuna delle 4 sezioni (formato: "Problema: X/10 | Soluzione: X/10 | Prova: X/10 | Obiezione: X/10")
+2. Un giudizio complessivo in 4-6 frasi: cosa funziona bene nell'insieme, qual è il punto più debole da rafforzare, e un consiglio concreto per migliorare prima di inserirla nel documento finale.`;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || "Impossibile ottenere la valutazione.";
+
+    // Estrai punteggi
+    const scoreMatch = text.match(/Problema:\s*(\d+)\/10.*?Soluzione:\s*(\d+)\/10.*?Prova:\s*(\d+)\/10.*?Obiezione:\s*(\d+)\/10/s);
+    let scoreHtml = '';
+    let bodyText = text;
+
+    if(scoreMatch) {
+      const scores = [scoreMatch[1], scoreMatch[2], scoreMatch[3], scoreMatch[4]];
+      const scoreLabels = ['Problema','Soluzione','Prova','Obiezione'];
+      scoreHtml = '<div class="score-row">';
+      scores.forEach((s, i) => {
+        const n = parseInt(s);
+        const cls = n >= 7 ? 'score-ok' : n >= 5 ? 'score-mid' : 'score-bad';
+        scoreHtml += `<div class="score-item"><div class="score-label">${scoreLabels[i]}</div><div class="score-value ${cls}">${s}/10</div></div>`;
+      });
+      scoreHtml += '</div>';
+      bodyText = text.replace(/Problema:\s*\d+\/10.*?Obiezione:\s*\d+\/10\s*/s, '').trim();
+    }
+
+    document.getElementById('scoreRow').innerHTML = scoreHtml;
+    document.getElementById('finalFeedbackText').innerHTML = bodyText;
+    document.getElementById('finalFeedbackCard').style.display = 'block';
+    document.getElementById('finalFeedbackCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch(e) {
+    document.getElementById('finalFeedbackText').textContent = "Errore di connessione. Controlla la rete e riprova.";
+    document.getElementById('finalFeedbackCard').style.display = 'block';
+  }
+
+  btn.textContent = '🔄 Rigenera valutazione';
+  btn.disabled = false;
+}
+
+function copyProposal() {
+  const proposal = document.getElementById('proposalTitle').value.trim() || 'Proposta';
+  const name = document.getElementById('studentName').value.trim() || '';
+  const texts = [1,2,3,4].map(n => document.getElementById('text'+n).value.trim());
+
+  let out = `${proposal}\n`;
+  if(name) out += `di ${name} · Classe 2E · A.S. 2025/2026\n`;
+  out += '\n';
+  [0,1,2,3].forEach(i => {
+    out += `${LABELS[i]}\n${texts[i]}\n\n`;
+  });
+
+  navigator.clipboard.writeText(out).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ Copiato!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copia tutto'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
